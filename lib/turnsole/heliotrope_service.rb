@@ -21,8 +21,8 @@ module Turnsole
       nil
     end
 
-    def create_product(identifier:, purchase: "x")
-      response = self.class.post("/products", { body: { product: { identifier: identifier, purchase: purchase } }.to_json } )
+    def create_product(identifier:, name:, purchase: "x")
+      response = self.class.post("/products", { body: { product: { identifier: identifier, name: name, purchase: purchase } }.to_json } )
       return response.parsed_response["id"] if response.success?
       nil
     rescue StandardError => e
@@ -33,7 +33,7 @@ module Turnsole
     def find_or_create_product(identifier:)
       id = find_product(identifier: identifier)
       return id unless id.nil?
-      create_product(identifier: identifier)
+      create_product(identifier: identifier, name: identifier, purchase: identifier)
     end
 
     def delete_product(identifier:)
