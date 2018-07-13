@@ -1,0 +1,49 @@
+#!/usr/bin/env ruby
+
+require 'optparse'
+require 'ostruct'
+require "bundler/setup"
+require "turnsole"
+
+list_products = false
+list_lessees = false
+
+options = OpenStruct.new
+option_parser = OptionParser.new do |opts|
+  opts.banner = "Usage: #{$0} -l -p [-b <base_uri>] [-t <token>] blah_blah_blah"
+  opts.on('-b', '--base [uri]', 'URL to api') do |base_uri|
+    options.base_uri = HTTParty.normalize_base_uri(base_uri)
+  end
+  opts.on('-l', '--lessees', 'List lessees') do
+    list_lessees = true
+  end
+  opts.on('-p', '--products', 'List products') do
+    list_products = true
+  end
+  opts.on('-t', '--token [jwt]', 'JWT token') do |jwt_token|
+    options.jwt_token = jwt_token
+  end
+  opts.on_tail('-h', '--help', 'Print this help message') do
+    puts opts
+    exit 0
+  end
+end
+option_parser.parse!(ARGV)
+
+if ARGV.empty?
+  puts option_parser.help()
+else
+  begin
+    Turnsole::HeliotropeService.default_options[:base_uri] = options.base_uri if options.base_uri
+    Turnsole::HeliotropeService.default_options[:headers][:authorization] = "Bearer #{options.jwt_token}" if options.jwt_token
+    puts Turnsole::HeliotropeService.default_options
+    puts ARGV[0]
+    heliotrope_service = Turnsole::HeliotropeService.new
+    puts heliotrope_service.products if list_products
+    puts heliotrope_service.lessees if list_lessees
+  rescue StandardError => e
+    STDERR.puts e.message
+  end
+  exit!(0)
+end
+

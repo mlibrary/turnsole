@@ -4,8 +4,6 @@ Welcome to your new gem! In this directory, you'll find the files you need to be
 
 Include the **Turnsole** gem in your Ruby shell scripts that query your [Heliotrope](https://github.com/mlibrary/heliotrope) application's REST API.
   
-TODO: Delete this and the text above, and describe your gem
-
 ## Installation
 
 Add this line to your application's Gemfile:
@@ -33,7 +31,44 @@ Add these variables to your environment:
 
 **HELIOTROPE_TOKEN** is the [JSON Web Token](https://jwt.io/) for your user account.
 
-TODO: Write usage instructions here
+## Examples
+
+### Handle Service
+
+	./bin/handle_service --help
+	Usage: ./bin/handle_service noid
+        -h, --help                       Print this help message
+
+Converts a [noid](https://github.com/samvera/noid-rails) into a path, url, and retreives it value
+        
+	./bin/handle_service validnoid
+    noid: validnoid
+    path: 2027/fulcrum.validnoid
+    url: http://hdl.handle.net/2027/fulcrum.validnoid
+    value: 
+
+### Heliotrope Service
+
+	./bin/heliotrope_service --help
+	Usage: ./bin/heliotrope_service -l -p [-b <base_uri>] [-t <token>] blah_blah_blah
+        -b, --base [uri]                 URL to api
+        -l, --lessees                    List lessees
+        -p, --products                   List products
+        -t, --token [jwt]                JWT token
+        -h, --help                       Print this help message
+        
+Lists products and lessees in your [Heliotrope](https://github.com/mlibrary/heliotrope) application
+        
+	./bin/heliotrope_service -l -p blah_blah_blah
+	{:parser=>HTTParty::Parser, :format=>:json, :base_uri=>"https://heliotrope-staging.hydra.lib.umich.edu/api", :headers=>{:authorization=>"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imdrb3N0aW5AdW1pY2guZWR1IiwicGluIjoiLUtTNGVhSDR4bUkydVZHayJ9.Z5sHJoeuWyVClzX62L3x7hWcwc0s_ujm-ZAzXsRUlGw", :accept=>"application/json, application/vnd.heliotrope.v1+json", :content_type=>"application/json"}}
+	blah_blah_blah
+	{"id"=>1, "identifier"=>"Gabii", "name"=>nil, "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/products/1.json"}
+	{"id"=>6, "identifier"=>"1", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/6.json"}
+	{"id"=>7, "identifier"=>"mbakeryo@umich.edu", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/7.json"}
+	{"id"=>8, "identifier"=>"2", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/8.json"}
+	{"id"=>9, "identifier"=>"sethajoh@umich.edu", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/9.json"}
+
+NOTE: **base_uri** and **token** obtained from environment.
 
 ## Development
 
@@ -43,7 +78,7 @@ To install this gem onto your local machine, run `bundle exec rake install`. To 
 
 ## Contributing
 
-Bug reports and pull requests are welcome on GitHub at https://github.com/[USERNAME]/turnsole. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
+Bug reports and pull requests are welcome on GitHub at https://github.com/mlibrary/turnsole. This project is intended to be a safe, welcoming space for collaboration, and contributors are expected to adhere to the [Contributor Covenant](http://contributor-covenant.org) code of conduct.
 
 ## License
 
