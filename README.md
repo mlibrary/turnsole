@@ -2,6 +2,8 @@
 
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/turnsole`. To experiment with that code, run `bin/console` for an interactive prompt.
 
+Include the **Turnsole** gem in your Ruby shell scripts that query your [Heliotrope](https://github.com/mlibrary/heliotrope) application's REST API.
+  
 TODO: Delete this and the text above, and describe your gem
 
 ## Installation
@@ -21,6 +23,15 @@ Or install it yourself as:
     $ gem install turnsole
 
 ## Usage
+
+Add these variables to your environment:
+
+	export HELIOTROPE_BASE_URI=https://localhost:3000/api
+	export HELIOTROPE_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imdrb3N0aW5AdW1pY2guZWR1IiwicGluIjoiJDJhJDEwJElmcTNWTUt1YVd1eTIxWVM1Rk0ucnU5RExDemZuNWRyYS54OGgwZDJhcms3dFVhTkxHNnoyIn0.67Uk4mvM_ZuXn7YpYXPIdd7ygTBKaL_Er6fx2HM_AXg
+
+**HELIOTROPE_BASE_URI** is the URL to your [Heliotrope](https://github.com/mlibrary/heliotrope) application's REST API.
+
+**HELIOTROPE_TOKEN** is the [JSON Web Token](https://jwt.io/) for your user account.
 
 TODO: Write usage instructions here
 
