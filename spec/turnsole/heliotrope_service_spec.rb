@@ -1,6 +1,6 @@
 # frozen_string_literal: true
 
-RSpec.describe HeliotropeService do
+RSpec.describe Turnsole::HeliotropeService do
   heliotrope_service = described_class.new
 
   products_initial_count = heliotrope_service.products.count

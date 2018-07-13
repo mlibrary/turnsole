@@ -1,4 +1,5 @@
 require "bundler/setup"
+require 'dotenv/load'
 require "turnsole"
 
 RSpec.configure do |config|
