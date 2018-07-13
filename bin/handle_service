@@ -5,9 +5,6 @@ require 'ostruct'
 require "bundler/setup"
 require "turnsole"
 
-list_products = false
-list_lessees = false
-
 options = OpenStruct.new
 option_parser = OptionParser.new do |opts|
   opts.banner = "Usage: #{$0} noid"
