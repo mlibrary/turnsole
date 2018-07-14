@@ -39,7 +39,7 @@ Add these variables to your environment:
 	Usage: ./bin/handle_service noid
         -h, --help                       Print this help message
 
-Converts a [noid](https://github.com/samvera/noid-rails) into a path, url, and retreives it value
+Converts a [noid](https://github.com/samvera/noid-rails) into a path, url, and retrieves it value
         
 	./bin/handle_service validnoid
     noid: validnoid
