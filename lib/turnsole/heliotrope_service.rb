@@ -60,6 +60,43 @@ module Turnsole
       []
     end
 
+    def find_institution(identifier:)
+      response = self.class.get("/institution", { query: { identifier: identifier } } )
+      return response.parsed_response["id"] if response.success?
+      nil
+    rescue StandardError => e
+      STDERR.puts e.message
+      nil
+    end
+
+    def create_institution(identifier:, name:, entity_id:)
+      response = self.class.post("/institutions", { body: { institution: { identifier: identifier, name: name, entity_id: entity_id }  }.to_json } )
+      return response.parsed_response["id"] if response.success?
+      nil
+    rescue StandardError => e
+      STDERR.puts e.message
+      nil
+    end
+
+    def find_or_create_institution(identifier:, name:, entity_id:)
+      id = find_institution(identifier: identifier)
+      return id unless id.nil?
+      create_institution(identifier: identifier, name: name, entity_id: entity_id)
+    end
+
+    def delete_institution(identifier:)
+      id = find_institution(identifier: identifier)
+      return if id.nil?
+      self.class.delete("/institutions/#{id}")
+    rescue StandardError => e
+      STDERR.puts e.message
+      nil
+    end
+
+    def institutions
+      self.class.get('/institutions').parsed_response
+    end
+    
     def find_lessee(identifier:)
       response = self.class.get("/lessee", { query: { identifier: identifier } } )
       return response.parsed_response["id"] if response.success?
@@ -139,4 +176,3 @@ module Turnsole
       end
   end
 end
-
