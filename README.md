@@ -1,5 +1,7 @@
 # Turnsole
 
+[![Coverage Status](https://coveralls.io/repos/github/mlibrary/turnsole/badge.svg?branch=master)](https://coveralls.io/github/mlibrary/turnsole?branch=master)
+
 Welcome to your new gem! In this directory, you'll find the files you need to be able to package up your Ruby library into a gem. Put your Ruby code in the file `lib/turnsole`. To experiment with that code, run `bin/console` for an interactive prompt.
 
 Include the **Turnsole** gem in your Ruby shell scripts that query your [Heliotrope](https://github.com/mlibrary/heliotrope) application's REST API.
@@ -24,51 +26,49 @@ Or install it yourself as:
 
 Add these variables to your environment:
 
-	export HELIOTROPE_BASE_URI=https://localhost:3000/api
-	export HELIOTROPE_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imdrb3N0aW5AdW1pY2guZWR1IiwicGluIjoiJDJhJDEwJElmcTNWTUt1YVd1eTIxWVM1Rk0ucnU5RExDemZuNWRyYS54OGgwZDJhcms3dFVhTkxHNnoyIn0.67Uk4mvM_ZuXn7YpYXPIdd7ygTBKaL_Er6fx2HM_AXg
+	export TURNSOLE_HELIOTROPE_API=http://localhost:3000/api
+	export TURNSOLE_HELIOTROPE_TOKEN=eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imdrb3N0aW5AdW1pY2guZWR1IiwicGluIjoiJDJhJDEwJElmcTNWTUt1YVd1eTIxWVM1Rk0ucnU5RExDemZuNWRyYS54OGgwZDJhcms3dFVhTkxHNnoyIn0.67Uk4mvM_ZuXn7YpYXPIdd7ygTBKaL_Er6fx2HM_AXg
 
-**HELIOTROPE_BASE_URI** is the URL to your [Heliotrope](https://github.com/mlibrary/heliotrope) application's REST API.
+**TURNSOLE_HELIOTROPE_API** is the URL to your [Heliotrope](https://github.com/mlibrary/heliotrope) application's API endpoint.
 
-**HELIOTROPE_TOKEN** is the [JSON Web Token](https://jwt.io/) for your user account.
+**TURNSOLE_HELIOTROPE_TOKEN** is the [JSON Web Token](https://jwt.io/) for your user account.
 
 ## Examples
 
 ### Handle Service
 
-	./bin/handle_service --help
-	Usage: ./bin/handle_service noid
-        -h, --help                       Print this help message
+	$ ./bin/handle --help
+	Usage: ./bin/handle noid
+		-h, --help                       Print this help message
 
-Converts a [noid](https://github.com/samvera/noid-rails) into a path, url, and retrieves it value
+Converts a [noid](https://github.com/samvera/noid-rails) into a path, url, and retrieves its value
         
-	./bin/handle_service validnoid
-    noid: validnoid
-    path: 2027/fulcrum.validnoid
-    url: http://hdl.handle.net/2027/fulcrum.validnoid
-    value: 
+	$ ./bin/handle validnoid
+	noid: validnoid
+	path: 2027/fulcrum.validnoid
+	url: https://hdl.handle.net/2027/fulcrum.validnoid
+	value: 100 : Handle Not Found. (HTTP 404 Not Found)
 
 ### Heliotrope Service
 
-	./bin/heliotrope_service --help
-	Usage: ./bin/heliotrope_service -l -p [-b <base_uri>] [-t <token>] blah_blah_blah
-        -b, --base [uri]                 URL to api
-        -l, --lessees                    List lessees
-        -p, --products                   List products
-        -t, --token [jwt]                JWT token
-        -h, --help                       Print this help message
+	$ ./bin/heliotrope --help
+	Usage: ./bin/heliotrope -v -p -c -d -s -g [-b <base>] [-t <token>]
+    	-v, --verbose                    Verbose
+    	-p, --products                   Products
+    	-c, --components                 Components
+    	-d, --individuals                Individuals
+    	-s, --institutions               Institutions
+    	-g, --grants                     Grants
+    	-b, --base [url]                 URL to api
+    	-t, --token [jwt]                JWT token
+    	-h, --help                       Print this help message
+    
+Lists products, components, individuals, institutions and grants in your [Heliotrope](https://github.com/mlibrary/heliotrope) application.
         
-Lists products and lessees in your [Heliotrope](https://github.com/mlibrary/heliotrope) application
-        
-	./bin/heliotrope_service -l -p blah_blah_blah
-	{:parser=>HTTParty::Parser, :format=>:json, :base_uri=>"https://heliotrope-staging.hydra.lib.umich.edu/api", :headers=>{:authorization=>"Bearer eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJlbWFpbCI6Imdrb3N0aW5AdW1pY2guZWR1IiwicGluIjoiLUtTNGVhSDR4bUkydVZHayJ9.Z5sHJoeuWyVClzX62L3x7hWcwc0s_ujm-ZAzXsRUlGw", :accept=>"application/json, application/vnd.heliotrope.v1+json", :content_type=>"application/json"}}
-	blah_blah_blah
-	{"id"=>1, "identifier"=>"Gabii", "name"=>nil, "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/products/1.json"}
-	{"id"=>6, "identifier"=>"1", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/6.json"}
-	{"id"=>7, "identifier"=>"mbakeryo@umich.edu", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/7.json"}
-	{"id"=>8, "identifier"=>"2", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/8.json"}
-	{"id"=>9, "identifier"=>"sethajoh@umich.edu", "url"=>"https://heliotrope-staging.hydra.lib.umich.edu/lessees/9.json"}
+	$ ./bin/heliotrope -p
+	{"products"=>[{"id"=>118, "identifier"=>"product", "name"=>"Product", "purchase"=>"https::/purchase.com/product", "url"=>"http://localhost:3000/products/118.json"}]}
 
-NOTE: **base_uri** and **token** obtained from environment.
+NOTE: **base** and **token** were obtained from the shell environment variables **TURNSOLE_HELIOTROPE_API** and **TURNSOLE_HELIOTROPE_TOKEN** respectively.
 
 ## Development
 
@@ -86,4 +86,4 @@ The gem is available as open source under the terms of the [MIT License](https:/
 
 ## Code of Conduct
 
-Everyone interacting in the Turnsole project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/[USERNAME]/turnsole/blob/master/CODE_OF_CONDUCT.md).
+Everyone interacting in the Turnsole project’s codebases, issue trackers, chat rooms and mailing lists is expected to follow the [code of conduct](https://github.com/mlibrary/turnsole/blob/master/CODE_OF_CONDUCT.md).

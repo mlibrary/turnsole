@@ -38,6 +38,7 @@ end
 
 #
 # Require Relative
-require_relative "./turnsole/handle_service"
-require_relative "./turnsole/heliotrope_service"
+#
+require_relative "./turnsole/handle"
+require_relative "./turnsole/heliotrope"
 require_relative "./turnsole/version"

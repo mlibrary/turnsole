@@ -1,0 +1,35 @@
+require: rubocop-rspec
+inherit_from: .rubocop_todo.yml
+
+AllCops:
+  DisplayCopNames: true
+  Include:
+  - 'bin/**/*'
+  - '**/*.rb'
+  - '**/Rakefile'
+  Exclude:
+  - 'bin/setup'
+  - 'tmp/**/*'
+
+Layout/IndentationConsistency:
+  EnforcedStyle: rails
+
+Metrics/BlockLength:
+  Exclude:
+  - 'spec/**/*'
+Metrics/LineLength:
+  Enabled: false
+
+RSpec/ContextWording:
+  Enabled: false
+RSpec/ExampleLength:
+  Enabled: false
+RSpec/MultipleExpectations:
+  Enabled: false
+RSpec/VerifiedDoubles:
+  Enabled: false
+
+Style/FrozenStringLiteralComment:
+  EnforcedStyle: always
+Style/StringLiterals:
+  Enabled: false
