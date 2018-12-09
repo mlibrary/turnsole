@@ -1,3 +1,22 @@
+# frozen_string_literal: true
+
+# require "coveralls"
+# Coveralls.wear!
+#
+# def coverage_needed?
+#   ENV['COVERAGE'] || ENV['TRAVIS']
+# end
+#
+# if coverage_needed?
+#   require 'coveralls'
+#   Coveralls.wear! do
+#     add_filter 'config'
+#     add_filter 'lib/spec'
+#     add_filter 'spec'
+#     add_filter 'lib/tasks'
+#   end
+# end
+
 require "bundler/setup"
 require 'dotenv/load'
 require "turnsole"

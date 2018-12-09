@@ -1,0 +1,4 @@
+# Put any overides here
+
+Style/Documentation:
+  Enabled: false
