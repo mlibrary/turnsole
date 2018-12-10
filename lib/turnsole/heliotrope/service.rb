@@ -135,7 +135,7 @@ module Turnsole
         STDERR.puts e.message
         false
       end
-      
+
       def add_product_component(product_identifier:, component_identifier:)
         product_id = find_product(identifier: product_identifier)
         component_id = find_component(identifier: component_identifier)
