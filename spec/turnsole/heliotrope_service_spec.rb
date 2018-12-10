@@ -62,7 +62,7 @@ RSpec.describe Turnsole::HeliotropeService do
       expect(heliotrope_service.component_products(handle: components[i]).count).to eq(0)
       expect(heliotrope_service.product_components(product_identifier: products[i]).count).to eq(0)
       expect(heliotrope_service.lessee_products(lessee_identifier: individuals[i]).count).to eq(0)
-      expect(heliotrope_service.lessee_products(lessee_identifier: institutions[i]).count).to eq(0)
+      expect(heliotrope_service.lessee_products(lessee_identifier: institutions[i]['inst_id']).count).to eq(0)
     end
 
     n.times do |i|
