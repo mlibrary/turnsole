@@ -62,43 +62,43 @@ RSpec.describe Turnsole::Heliotrope::Service do
     expect(service.institutions.count).to eq(institutions_initial_count + n)
 
     n.times do |i|
-      expect(service.product_components(product_identifier: products[i]).count).to eq(0)
-      expect(service.component_products(component_identifier: components[i]).count).to eq(0)
-      expect(service.product_individuals(product_identifier: products[i]).count).to eq(0)
-      expect(service.individual_products(individual_identifier: individuals[i]).count).to eq(0)
-      expect(service.product_institutions(product_identifier: products[i]).count).to eq(0)
-      expect(service.institution_products(institution_identifier: institutions[i]['inst_id']).count).to eq(0)
+      expect(service.product_components(identifier: products[i]).count).to eq(0)
+      expect(service.component_products(identifier: components[i]).count).to eq(0)
+      expect(service.product_individuals(identifier: products[i]).count).to eq(0)
+      expect(service.individual_products(identifier: individuals[i]).count).to eq(0)
+      expect(service.product_institutions(identifier: products[i]).count).to eq(0)
+      expect(service.institution_products(identifier: institutions[i]['inst_id']).count).to eq(0)
     end
 
     n.times do |i|
       service.subscribe_product_individual(product_identifier: products[0], individual_identifier: individuals[i])
     end
-    expect(service.product_individuals(product_identifier: products[0]).count).to eq(n)
+    expect(service.product_individuals(identifier: products[0]).count).to eq(n)
 
     n.times do |i|
       service.subscribe_product_institution(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'])
     end
-    expect(service.product_institutions(product_identifier: products[0]).count).to eq(n)
+    expect(service.product_institutions(identifier: products[0]).count).to eq(n)
 
     n.times do |i|
       service.subscribe_product_individual(product_identifier: products[i], individual_identifier: individuals[0])
     end
-    expect(service.individual_products(individual_identifier: individuals[0]).count).to eq(n)
+    expect(service.individual_products(identifier: individuals[0]).count).to eq(n)
 
     n.times do |i|
       service.subscribe_product_institution(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'])
     end
-    expect(service.institution_products(institution_identifier: institutions[0]['inst_id']).count).to eq(n)
+    expect(service.institution_products(identifier: institutions[0]['inst_id']).count).to eq(n)
 
     n.times do |i|
       service.add_product_component(product_identifier: products[0], component_identifier: components[i])
     end
-    expect(service.product_components(product_identifier: products[0]).count).to eq(n)
+    expect(service.product_components(identifier: products[0]).count).to eq(n)
 
     n.times do |i|
       service.add_product_component(product_identifier: products[i], component_identifier: components[0])
     end
-    expect(service.component_products(component_identifier: components[0]).count).to eq(n)
+    expect(service.component_products(identifier: components[0]).count).to eq(n)
 
     n.times do |i|
       service.unsubscribe_product_individual(product_identifier: products[0], individual_identifier: individuals[i])
@@ -108,11 +108,11 @@ RSpec.describe Turnsole::Heliotrope::Service do
       service.remove_product_component(product_identifier: products[0], component_identifier: components[i])
       service.remove_product_component(product_identifier: products[i], component_identifier: components[0])
     end
-    expect(service.product_individuals(product_identifier: products[0]).count).to eq(0)
-    expect(service.individual_products(individual_identifier: individuals[0]).count).to eq(0)
-    expect(service.product_institutions(product_identifier: products[0]).count).to eq(0)
-    expect(service.institution_products(institution_identifier: institutions[0]['inst_id']).count).to eq(0)
-    expect(service.product_components(product_identifier: products[0]).count).to eq(0)
-    expect(service.component_products(component_identifier: components[0]).count).to eq(0)
+    expect(service.product_individuals(identifier: products[0]).count).to eq(0)
+    expect(service.individual_products(identifier: individuals[0]).count).to eq(0)
+    expect(service.product_institutions(identifier: products[0]).count).to eq(0)
+    expect(service.institution_products(identifier: institutions[0]['inst_id']).count).to eq(0)
+    expect(service.product_components(identifier: products[0]).count).to eq(0)
+    expect(service.component_products(identifier: components[0]).count).to eq(0)
   end
 end
