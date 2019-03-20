@@ -13,12 +13,14 @@ module Turnsole
       def products
         response = connection.get('products')
         return response.body if response.success?
+
         []
       end
 
       def find_product(identifier:)
         response = connection.get("product", identifier: identifier)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -28,6 +30,7 @@ module Turnsole
       def create_product(identifier:, name:, purchase: "x")
         response = connection.post("products", { product: { identifier: identifier, name: name, purchase: purchase } }.to_json)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -37,6 +40,7 @@ module Turnsole
       def delete_product(identifier:)
         id = find_product(identifier: identifier)
         return if id.nil?
+
         connection.delete("products/#{id}")
       rescue StandardError => e
         STDERR.puts e.message
@@ -46,8 +50,10 @@ module Turnsole
       def product_components(identifier:)
         product_id = find_product(identifier: identifier)
         return [] if product_id.nil?
+
         response = connection.get("products/#{product_id}/components")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -57,8 +63,10 @@ module Turnsole
       def product_individuals(identifier:)
         product_id = find_product(identifier: identifier)
         return [] if product_id.nil?
+
         response = connection.get("products/#{product_id}/individuals")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -68,8 +76,10 @@ module Turnsole
       def product_institutions(identifier:)
         product_id = find_product(identifier: identifier)
         return [] if product_id.nil?
+
         response = connection.get("products/#{product_id}/institutions")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -82,21 +92,24 @@ module Turnsole
       def components
         response = connection.get('components')
         return response.body if response.success?
+
         []
       end
 
       def find_component(identifier:)
         response = connection.get("component", identifier: identifier)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
         nil
       end
 
-      def create_component(identifier:, name:, noid:, handle:)
-        response = connection.post("components", { component: { identifier: identifier, name: name, noid: noid, handle: handle } }.to_json)
+      def create_component(identifier:, name:, noid:)
+        response = connection.post("components", { component: { identifier: identifier, name: name, noid: noid } }.to_json)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -106,6 +119,7 @@ module Turnsole
       def delete_component(identifier:)
         id = find_component(identifier: identifier)
         return if id.nil?
+
         connection.delete("components/#{id}")
       rescue StandardError => e
         STDERR.puts e.message
@@ -115,8 +129,10 @@ module Turnsole
       def component_products(identifier:)
         component_id = find_component(identifier: identifier)
         return [] if component_id.nil?
+
         response = connection.get("components/#{component_id}/products")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -130,6 +146,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_component(identifier: component_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.get("/api/products/#{product_id}/components/#{id}")
         response.success?
       rescue StandardError => e
@@ -141,6 +158,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_component(identifier: component_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.put("products/#{product_id}/components/#{id}")
         response.success?
       rescue StandardError => e
@@ -152,6 +170,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_component(identifier: component_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.delete("products/#{product_id}/components/#{id}")
         response.success?
       rescue StandardError => e
@@ -165,12 +184,14 @@ module Turnsole
       def individuals
         response = connection.get('individuals')
         return response.body if response.success?
+
         []
       end
 
       def find_individual(identifier:)
         response = connection.get("individual", identifier: identifier)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -180,6 +201,7 @@ module Turnsole
       def create_individual(identifier:, name:, email:)
         response = connection.post("individuals", { individual: { identifier: identifier, name: name, email: email } }.to_json)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -189,6 +211,7 @@ module Turnsole
       def delete_individual(identifier:)
         id = find_individual(identifier: identifier)
         return if id.nil?
+
         connection.delete("individuals/#{id}")
       rescue StandardError => e
         STDERR.puts e.message
@@ -198,8 +221,10 @@ module Turnsole
       def individual_products(identifier:)
         individual_id = find_individual(identifier: identifier)
         return [] if individual_id.nil?
+
         response = connection.get("individuals/#{individual_id}/products")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -212,12 +237,14 @@ module Turnsole
       def institutions
         response = connection.get('institutions')
         return response.body if response.success?
+
         []
       end
 
       def find_institution(identifier:)
         response = connection.get("institution", identifier: identifier)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -227,6 +254,7 @@ module Turnsole
       def create_institution(identifier:, name:, entity_id:)
         response = connection.post("institutions", { institution: { identifier: identifier, name: name, entity_id: entity_id } }.to_json)
         return response.body["id"] if response.success?
+
         nil
       rescue StandardError => e
         STDERR.puts e.message
@@ -236,6 +264,7 @@ module Turnsole
       def delete_institution(identifier:)
         id = find_institution(identifier: identifier)
         return if id.nil?
+
         connection.delete("institutions/#{id}")
       rescue StandardError => e
         STDERR.puts e.message
@@ -245,8 +274,10 @@ module Turnsole
       def institution_products(identifier:)
         institution_id = find_institution(identifier: identifier)
         return [] if institution_id.nil?
+
         response = connection.get("institutions/#{institution_id}/products")
         return response.body if response.success?
+
         []
       rescue StandardError => e
         STDERR.puts e.message
@@ -261,6 +292,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_individual(identifier: individual_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.get("products/#{product_id}/individuals/#{id}")
         response.success?
       rescue StandardError => e
@@ -272,6 +304,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_individual(identifier: individual_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.put("products/#{product_id}/individuals/#{id}")
         response.success?
       rescue StandardError => e
@@ -283,6 +316,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_individual(identifier: individual_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.delete("products/#{product_id}/individuals/#{id}")
         response.success?
       rescue StandardError => e
@@ -294,6 +328,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_institution(identifier: institution_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.get("products/#{product_id}/institutions/#{id}")
         response.success?
       rescue StandardError => e
@@ -305,6 +340,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_institution(identifier: institution_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.put("products/#{product_id}/institutions/#{id}")
         response.success?
       rescue StandardError => e
@@ -316,6 +352,7 @@ module Turnsole
         product_id = find_product(identifier: product_identifier)
         id = find_institution(identifier: institution_identifier)
         return false if product_id.nil? || id.nil?
+
         response = connection.delete("products/#{product_id}/institutions/#{id}")
         response.success?
       rescue StandardError => e
