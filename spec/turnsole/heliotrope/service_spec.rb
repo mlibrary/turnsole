@@ -19,7 +19,7 @@ RSpec.describe Turnsole::Heliotrope::Service do
       products << "product#{i}"
       service.create_product(identifier: products[i], name: "product#{i}", purchase: "product#{i}")
       components << "component#{i}"
-      service.create_component(identifier: components[i], name: "component#{i}", noid: "component#{i}", handle: "component#{i}")
+      service.create_component(identifier: components[i], name: "component#{i}", noid: "component#{i}")
       individuals << "individual#{i}"
       service.create_individual(identifier: individuals[i], name: "individual#{i}", email: "individual#{i}")
       inst = {}

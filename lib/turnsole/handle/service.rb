@@ -3,18 +3,21 @@
 module Turnsole
   module Handle
     class Service
-      DOI_ORG_PREFIX = 'https://doi.org/'.freeze
-      HANDLE_NET_PREFIX = 'https://hdl.handle.net/'.freeze
+      DOI_ORG_PREFIX = 'https://doi.org/'
+      HANDLE_NET_PREFIX = 'https://hdl.handle.net/'
       HANDLE_NET_API_HANDLES = (HANDLE_NET_PREFIX + 'api/handles/').freeze
-      FULCRUM_PREFIX = '2027/fulcrum.'.freeze
+      FULCRUM_PREFIX = '2027/fulcrum.'
 
       def self.noid(handle_path_or_url)
         match = /^(.*)(#{Regexp.escape(FULCRUM_PREFIX)})(.*)$/i.match(handle_path_or_url || "")
         return nil if match.nil?
+
         noid = /^[[:alnum:]]{9}$/i.match(match[3])
         return match[3] unless noid.nil?
+
         noid = /^([[:alnum:]]{9})\?(.*)$/i.match(match[3])
         return nil if noid.nil?
+
         noid[1]
       end
 
