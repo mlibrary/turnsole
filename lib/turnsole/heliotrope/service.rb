@@ -22,18 +22,13 @@ module Turnsole
         return response.body["id"] if response.success?
 
         nil
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def create_product(identifier:, name:, purchase: "x")
         response = connection.post("products", { product: { identifier: identifier, name: name, purchase: purchase } }.to_json)
         return response.body["id"] if response.success?
 
-        nil
-      rescue StandardError => e
-        STDERR.puts e.message
+        warn "Unable to create product #{identifier} - #{response.body.to_s}"
         nil
       end
 
@@ -42,9 +37,6 @@ module Turnsole
         return if id.nil?
 
         connection.delete("products/#{id}")
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def product_components(identifier:)
@@ -54,9 +46,6 @@ module Turnsole
         response = connection.get("products/#{product_id}/components")
         return response.body if response.success?
 
-        []
-      rescue StandardError => e
-        STDERR.puts e.message
         []
       end
 
@@ -68,9 +57,6 @@ module Turnsole
         return response.body if response.success?
 
         []
-      rescue StandardError => e
-        STDERR.puts e.message
-        []
       end
 
       def product_institutions(identifier:)
@@ -80,9 +66,6 @@ module Turnsole
         response = connection.get("products/#{product_id}/institutions")
         return response.body if response.success?
 
-        []
-      rescue StandardError => e
-        STDERR.puts e.message
         []
       end
 
@@ -101,18 +84,13 @@ module Turnsole
         return response.body["id"] if response.success?
 
         nil
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def create_component(identifier:, name:, noid:)
         response = connection.post("components", { component: { identifier: identifier, name: name, noid: noid } }.to_json)
         return response.body["id"] if response.success?
 
-        nil
-      rescue StandardError => e
-        STDERR.puts e.message
+        warn "Unable to create component #{identifier} - #{response.body.to_s}"
         nil
       end
 
@@ -121,9 +99,6 @@ module Turnsole
         return if id.nil?
 
         connection.delete("components/#{id}")
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def component_products(identifier:)
@@ -133,9 +108,6 @@ module Turnsole
         response = connection.get("components/#{component_id}/products")
         return response.body if response.success?
 
-        []
-      rescue StandardError => e
-        STDERR.puts e.message
         []
       end
 
@@ -149,9 +121,6 @@ module Turnsole
 
         response = connection.get("/api/products/#{product_id}/components/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def add_product_component(product_identifier:, component_identifier:)
@@ -161,9 +130,6 @@ module Turnsole
 
         response = connection.put("products/#{product_id}/components/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def remove_product_component(product_identifier:, component_identifier:)
@@ -173,9 +139,6 @@ module Turnsole
 
         response = connection.delete("products/#{product_id}/components/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       #
@@ -193,18 +156,13 @@ module Turnsole
         return response.body["id"] if response.success?
 
         nil
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def create_individual(identifier:, name:, email:)
         response = connection.post("individuals", { individual: { identifier: identifier, name: name, email: email } }.to_json)
         return response.body["id"] if response.success?
 
-        nil
-      rescue StandardError => e
-        STDERR.puts e.message
+        warn "Unable to create individual #{identifier} - #{response.body.to_s}"
         nil
       end
 
@@ -213,9 +171,6 @@ module Turnsole
         return if id.nil?
 
         connection.delete("individuals/#{id}")
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def individual_products(identifier:)
@@ -225,9 +180,6 @@ module Turnsole
         response = connection.get("individuals/#{individual_id}/products")
         return response.body if response.success?
 
-        []
-      rescue StandardError => e
-        STDERR.puts e.message
         []
       end
 
@@ -246,18 +198,13 @@ module Turnsole
         return response.body["id"] if response.success?
 
         nil
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def create_institution(identifier:, name:, entity_id:)
         response = connection.post("institutions", { institution: { identifier: identifier, name: name, entity_id: entity_id } }.to_json)
         return response.body["id"] if response.success?
 
-        nil
-      rescue StandardError => e
-        STDERR.puts e.message
+        warn "Unable to create institution #{identifier} - #{response.body.to_s}"
         nil
       end
 
@@ -266,9 +213,6 @@ module Turnsole
         return if id.nil?
 
         connection.delete("institutions/#{id}")
-      rescue StandardError => e
-        STDERR.puts e.message
-        nil
       end
 
       def institution_products(identifier:)
@@ -278,9 +222,6 @@ module Turnsole
         response = connection.get("institutions/#{institution_id}/products")
         return response.body if response.success?
 
-        []
-      rescue StandardError => e
-        STDERR.puts e.message
         []
       end
 
@@ -295,9 +236,6 @@ module Turnsole
 
         response = connection.get("products/#{product_id}/individuals/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def subscribe_product_individual(product_identifier:, individual_identifier:)
@@ -307,9 +245,6 @@ module Turnsole
 
         response = connection.put("products/#{product_id}/individuals/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def unsubscribe_product_individual(product_identifier:, individual_identifier:)
@@ -319,9 +254,6 @@ module Turnsole
 
         response = connection.delete("products/#{product_id}/individuals/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def product_institution_subscribed?(product_identifier:, institution_identifier:)
@@ -331,9 +263,6 @@ module Turnsole
 
         response = connection.get("products/#{product_id}/institutions/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def subscribe_product_institution(product_identifier:, institution_identifier:)
@@ -343,9 +272,6 @@ module Turnsole
 
         response = connection.put("products/#{product_id}/institutions/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       def unsubscribe_product_institution(product_identifier:, institution_identifier:)
@@ -355,9 +281,6 @@ module Turnsole
 
         response = connection.delete("products/#{product_id}/institutions/#{id}")
         response.success?
-      rescue StandardError => e
-        STDERR.puts e.message
-        false
       end
 
       #
