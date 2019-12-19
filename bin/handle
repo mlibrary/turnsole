@@ -27,7 +27,7 @@ else
     puts "url: #{Turnsole::Handle::Service.url(noid)}"
     puts "value: #{Turnsole::Handle::Service.value(noid)}"
   rescue StandardError => e
-    STDERR.puts e.message
+    warn e.message
   end
   exit!(0)
 end

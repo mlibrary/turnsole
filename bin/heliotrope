@@ -57,7 +57,7 @@ begin
   response["institutions"] = service.institutions if institutions
   puts response
 rescue StandardError => e
-  STDERR.puts e.message
+  warn e.message
 end
 exit!(0)
 # end
