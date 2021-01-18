@@ -2,6 +2,7 @@
 
 module Turnsole
   module Heliotrope
+    PRODUCT_ACCESS_TYPES = %i[full read none].freeze
   end
 end
 

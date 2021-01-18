@@ -28,7 +28,7 @@ module Turnsole
         response = connection.post("products", { product: { identifier: identifier, name: name, purchase: purchase } }.to_json)
         return response.body["id"] if response.success?
 
-        warn "Unable to create product #{identifier} - #{response.body.to_s}"
+        warn "Unable to create product #{identifier} - #{response.body}"
         nil
       end
 
@@ -97,7 +97,7 @@ module Turnsole
         response = connection.post("components", { component: { identifier: identifier, name: name, noid: noid } }.to_json)
         return response.body["id"] if response.success?
 
-        warn "Unable to create component #{identifier} - #{response.body.to_s}"
+        warn "Unable to create component #{identifier} - #{response.body}"
         nil
       end
 
@@ -169,7 +169,7 @@ module Turnsole
         response = connection.post("individuals", { individual: { identifier: identifier, name: name, email: email } }.to_json)
         return response.body["id"] if response.success?
 
-        warn "Unable to create individual #{identifier} - #{response.body.to_s}"
+        warn "Unable to create individual #{identifier} - #{response.body}"
         nil
       end
 
@@ -211,7 +211,7 @@ module Turnsole
         response = connection.post("institutions", { institution: { identifier: identifier, name: name, entity_id: entity_id } }.to_json)
         return response.body["id"] if response.success?
 
-        warn "Unable to create institution #{identifier} - #{response.body.to_s}"
+        warn "Unable to create institution #{identifier} - #{response.body}"
         nil
       end
 
@@ -245,13 +245,21 @@ module Turnsole
         response.success?
       end
 
-      def subscribe_product_individual(product_identifier:, individual_identifier:)
+      def subscribe_product_individual(product_identifier:, individual_identifier:, access_type: :full)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
         product_id = find_product(identifier: product_identifier)
         id = find_individual(identifier: individual_identifier)
         return false if product_id.nil? || id.nil?
 
         response = connection.put("products/#{product_id}/individuals/#{id}")
-        response.success?
+        return false unless response.success?
+
+        response = connection.post("products/#{product_id}/individuals/#{id}/access", { access: access_type }.to_json)
+        return true if response.success?
+
+        warn "Failed to set access #{access_type} on product #{product_identifier} for individual #{individual_identifier}"
+        true
       end
 
       def unsubscribe_product_individual(product_identifier:, individual_identifier:)
@@ -272,13 +280,21 @@ module Turnsole
         response.success?
       end
 
-      def subscribe_product_institution(product_identifier:, institution_identifier:)
+      def subscribe_product_institution(product_identifier:, institution_identifier:, access_type: :full)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
         product_id = find_product(identifier: product_identifier)
         id = find_institution(identifier: institution_identifier)
         return false if product_id.nil? || id.nil?
 
         response = connection.put("products/#{product_id}/institutions/#{id}")
-        response.success?
+        return false unless response.success?
+
+        response = connection.post("products/#{product_id}/institutions/#{id}/access", { access: access_type }.to_json)
+        return true if response.success?
+
+        warn "Failed to set access #{access_type} on product #{product_identifier} for institution #{institution_identifier}"
+        true
       end
 
       def unsubscribe_product_institution(product_identifier:, institution_identifier:)
@@ -288,6 +304,78 @@ module Turnsole
 
         response = connection.delete("products/#{product_id}/institutions/#{id}")
         response.success?
+      end
+
+      #
+      # Access { :full, :read, :none }
+      #
+      #   :full - both read and download access
+      #   :read - read access (no download access)
+      #   :none - expired access
+      #
+      #   :undefined - no association between subscriber and product
+      #
+
+      def product_individual_access?(product_identifier:, individual_identifier:, access_type:)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
+        access_type == product_individual_access(product_identifier: product_identifier, individual_identifier: individual_identifier)
+      end
+
+      def product_individual_access(product_identifier:, individual_identifier:)
+        product_id = find_product(identifier: product_identifier)
+        id = find_individual(identifier: individual_identifier)
+        return :undefined if product_id.nil? || id.nil?
+
+        response = connection.get("products/#{product_id}/individuals/#{id}/access")
+        return :undefined unless response.success?
+
+        response.body["access"].to_sym
+      end
+
+      def access_product_individual(product_identifier:, individual_identifier:, access_type:)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
+        product_id = find_product(identifier: product_identifier)
+        id = find_individual(identifier: individual_identifier)
+        return false if product_id.nil? || id.nil?
+
+        response = connection.post("products/#{product_id}/individuals/#{id}/access", { access: access_type }.to_json)
+        return true if response.success?
+
+        warn "Failed to set access #{access_type} on product #{product_identifier} for individual #{individual_identifier}"
+        false
+      end
+
+      def product_institution_access?(product_identifier:, institution_identifier:, access_type:)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
+        access_type == product_institution_access(product_identifier: product_identifier, institution_identifier: institution_identifier)
+      end
+
+      def product_institution_access(product_identifier:, institution_identifier:)
+        product_id = find_product(identifier: product_identifier)
+        id = find_institution(identifier: institution_identifier)
+        return :undefined if product_id.nil? || id.nil?
+
+        response = connection.get("products/#{product_id}/institutions/#{id}/access")
+        return :undefined unless response.success?
+
+        response.body["access"].to_sym
+      end
+
+      def access_product_institution(product_identifier:, institution_identifier:, access_type:)
+        return false unless PRODUCT_ACCESS_TYPES.include?(access_type)
+
+        product_id = find_product(identifier: product_identifier)
+        id = find_institution(identifier: institution_identifier)
+        return false if product_id.nil? || id.nil?
+
+        response = connection.post("products/#{product_id}/institutions/#{id}/access", { access: access_type }.to_json)
+        return true if response.success?
+
+        warn "Failed to set access #{access_type} on product #{product_identifier} for institution #{institution_identifier}"
+        false
       end
 
       #

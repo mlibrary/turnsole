@@ -3,14 +3,18 @@
 RSpec.describe Turnsole::Heliotrope::Service do
   service = described_class.new
 
+  #
+  # Cannot create components because noid has to be valid!!!
+  #
+
   products_initial_count = service.products.count
-  components_initial_count = service.components.count
+  # components_initial_count = service.components.count
   individuals_initial_count = service.individuals.count
   institutions_initial_count = service.institutions.count
 
   n = 3
   products = []
-  components = []
+  # components = []
   individuals = []
   institutions = []
 
@@ -18,8 +22,8 @@ RSpec.describe Turnsole::Heliotrope::Service do
     n.times do |i|
       products << "product#{i}"
       service.create_product(identifier: products[i], name: "product#{i}", purchase: "product#{i}")
-      components << "component#{i}"
-      service.create_component(identifier: components[i], name: "component#{i}", noid: "component#{i}")
+      # components << "component#{i}"
+      # service.create_component(identifier: components[i], name: "component#{i}", noid: "component#{i}")
       individuals << "individual#{i}"
       service.create_individual(identifier: individuals[i], name: "individual#{i}", email: "individual#{i}")
       inst = {}
@@ -34,7 +38,7 @@ RSpec.describe Turnsole::Heliotrope::Service do
       end
     end
     products_initial_count = service.products.count - n
-    components_initial_count = service.components.count - n
+    # components_initial_count = service.components.count - n
     individuals_initial_count = service.individuals.count - n
     institutions_initial_count = service.institutions.count - n
   end
@@ -44,12 +48,12 @@ RSpec.describe Turnsole::Heliotrope::Service do
       n.times do |j|
         service.unsubscribe_product_individual(product_identifier: products[i], individual_identifier: individuals[j])
         service.unsubscribe_product_institution(product_identifier: products[i], institution_identifier: institutions[j]['inst_id'])
-        service.remove_product_component(product_identifier: products[i], component_identifier: components[j])
+        # service.remove_product_component(product_identifier: products[i], component_identifier: components[j])
       end
     end
     n.times do |i|
       service.delete_product(identifier: products[i])
-      service.delete_component(identifier: components[i])
+      # service.delete_component(identifier: components[i])
       service.delete_individual(identifier: individuals[i])
       service.delete_institution(identifier: institutions[i]['inst_id'])
     end
@@ -57,13 +61,13 @@ RSpec.describe Turnsole::Heliotrope::Service do
 
   it 'works' do
     expect(service.products.count).to eq(products_initial_count + n)
-    expect(service.components.count).to eq(components_initial_count + n)
+    # expect(service.components.count).to eq(components_initial_count + n)
     expect(service.individuals.count).to eq(individuals_initial_count + n)
     expect(service.institutions.count).to eq(institutions_initial_count + n)
 
     n.times do |i|
       expect(service.product_components(identifier: products[i]).count).to eq(0)
-      expect(service.component_products(identifier: components[i]).count).to eq(0)
+      # expect(service.component_products(identifier: components[i]).count).to eq(0)
       expect(service.product_individuals(identifier: products[i]).count).to eq(0)
       expect(service.individual_products(identifier: individuals[i]).count).to eq(0)
       expect(service.product_institutions(identifier: products[i]).count).to eq(0)
@@ -90,29 +94,102 @@ RSpec.describe Turnsole::Heliotrope::Service do
     end
     expect(service.institution_products(identifier: institutions[0]['inst_id']).count).to eq(n)
 
-    n.times do |i|
-      service.add_product_component(product_identifier: products[0], component_identifier: components[i])
-    end
-    expect(service.product_components(identifier: products[0]).count).to eq(n)
+    # n.times do |i|
+    #   service.add_product_component(product_identifier: products[0], component_identifier: components[i])
+    # end
+    # expect(service.product_components(identifier: products[0]).count).to eq(n)
+
+    # n.times do |i|
+    #   service.add_product_component(product_identifier: products[i], component_identifier: components[0])
+    # end
+    # expect(service.component_products(identifier: components[0]).count).to eq(n)
 
     n.times do |i|
-      service.add_product_component(product_identifier: products[i], component_identifier: components[0])
+      expect(service.access_product_individual(product_identifier: products[0], individual_identifier: individuals[i], access_type: :undefined)).to be false
+      expect(service.access_product_individual(product_identifier: products[i], individual_identifier: individuals[0], access_type: :undefined)).to be false
+      expect(service.access_product_institution(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :undefined)).to be false
+      expect(service.access_product_institution(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :undefined)).to be false
     end
-    expect(service.component_products(identifier: components[0]).count).to eq(n)
+
+    n.times do |i|
+      expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :full)).to be true
+      expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :full)).to be true
+      expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :full)).to be true
+      expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :full)).to be true
+    end
+
+    n.times do |i|
+      expect(service.access_product_individual(product_identifier: products[0], individual_identifier: individuals[i], access_type: :read)).to be true
+      expect(service.access_product_individual(product_identifier: products[i], individual_identifier: individuals[0], access_type: :read)).to be true
+      expect(service.access_product_institution(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :read)).to be true
+      expect(service.access_product_institution(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :read)).to be true
+    end
+
+    # Uncomment this test when heliotrope API has been fleshed out
+    # n.times do |i|
+    #   expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :full)).to be false
+    #   expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :full)).to be false
+    #   expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :full)).to be false
+    #   expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :full)).to be false
+    # end
+
+    # Uncomment this test when heliotrope API has been fleshed out
+    # n.times do |i|
+    #   expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :read)).to be true
+    #   expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :read)).to be true
+    #   expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :read)).to be true
+    #   expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :read)).to be true
+    # end
+
+    n.times do |i|
+      expect(service.access_product_individual(product_identifier: products[0], individual_identifier: individuals[i], access_type: :none)).to be true
+      expect(service.access_product_individual(product_identifier: products[i], individual_identifier: individuals[0], access_type: :none)).to be true
+      expect(service.access_product_institution(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :none)).to be true
+      expect(service.access_product_institution(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :none)).to be true
+    end
+
+    n.times do |i|
+      expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :read)).to be false
+      expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :read)).to be false
+      expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :read)).to be false
+      expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :read)).to be false
+    end
+
+    # Uncomment this test when heliotrope API has been fleshed out
+    # n.times do |i|
+    #   expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :none)).to be true
+    #   expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :none)).to be true
+    #   expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :none)).to be true
+    #   expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :none)).to be true
+    # end
 
     n.times do |i|
       service.unsubscribe_product_individual(product_identifier: products[0], individual_identifier: individuals[i])
       service.unsubscribe_product_individual(product_identifier: products[i], individual_identifier: individuals[0])
       service.unsubscribe_product_institution(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'])
       service.unsubscribe_product_institution(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'])
-      service.remove_product_component(product_identifier: products[0], component_identifier: components[i])
-      service.remove_product_component(product_identifier: products[i], component_identifier: components[0])
+      # service.remove_product_component(product_identifier: products[0], component_identifier: components[i])
+      # service.remove_product_component(product_identifier: products[i], component_identifier: components[0])
     end
     expect(service.product_individuals(identifier: products[0]).count).to eq(0)
     expect(service.individual_products(identifier: individuals[0]).count).to eq(0)
     expect(service.product_institutions(identifier: products[0]).count).to eq(0)
     expect(service.institution_products(identifier: institutions[0]['inst_id']).count).to eq(0)
-    expect(service.product_components(identifier: products[0]).count).to eq(0)
-    expect(service.component_products(identifier: components[0]).count).to eq(0)
+    # expect(service.product_components(identifier: products[0]).count).to eq(0)
+    # expect(service.component_products(identifier: components[0]).count).to eq(0)
+
+    n.times do |i|
+      expect(service.product_individual_access?(product_identifier: products[0], individual_identifier: individuals[i], access_type: :none)).to be false
+      expect(service.product_individual_access?(product_identifier: products[i], individual_identifier: individuals[0], access_type: :none)).to be false
+      expect(service.product_institution_access?(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'], access_type: :none)).to be false
+      expect(service.product_institution_access?(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'], access_type: :none)).to be false
+    end
+
+    n.times do |i|
+      expect(service.product_individual_access(product_identifier: products[0], individual_identifier: individuals[i])).to be :undefined
+      expect(service.product_individual_access(product_identifier: products[i], individual_identifier: individuals[0])).to be :undefined
+      expect(service.product_institution_access(product_identifier: products[0], institution_identifier: institutions[i]['inst_id'])).to be :undefined
+      expect(service.product_institution_access(product_identifier: products[i], institution_identifier: institutions[0]['inst_id'])).to be :undefined
+    end
   end
 end
