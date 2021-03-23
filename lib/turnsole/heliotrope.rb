@@ -2,6 +2,7 @@
 
 module Turnsole
   module Heliotrope
+    LICENSES = %i[full read none].freeze
   end
 end
 
