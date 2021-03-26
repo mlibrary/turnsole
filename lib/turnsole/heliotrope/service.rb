@@ -93,6 +93,27 @@ module Turnsole
         nil
       end
 
+      def find_noid_by_identifier(identifier:)
+        response = connection.get("noids", identifier: identifier)
+        return response.body if response.success?
+
+        nil
+      end
+
+      def find_noid_by_doi(doi:)
+        response = connection.get("noids", doi: doi)
+        return response.body if response.success?
+
+        nil
+      end
+
+      def find_noid_by_isbn(isbn:)
+        response = connection.get("noids", isbn: isbn)
+        return response.body if response.success?
+
+        nil
+      end
+
       def create_component(identifier:, name:, noid:)
         response = connection.post("components", { component: { identifier: identifier, name: name, noid: noid } }.to_json)
         return response.body["id"] if response.success?
