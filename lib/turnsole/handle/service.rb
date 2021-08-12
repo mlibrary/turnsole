@@ -5,7 +5,7 @@ module Turnsole
     class Service
       DOI_ORG_PREFIX = 'https://doi.org/'
       HANDLE_NET_PREFIX = 'https://hdl.handle.net/'
-      HANDLE_NET_API_HANDLES = (HANDLE_NET_PREFIX + 'api/handles/').freeze
+      HANDLE_NET_API_HANDLES = "#{HANDLE_NET_PREFIX}api/handles/"
       FULCRUM_PREFIX = '2027/fulcrum.'
 
       def self.noid(handle_path_or_url)
@@ -29,7 +29,7 @@ module Turnsole
         HANDLE_NET_PREFIX + path(noid)
       end
 
-      def self.value(noid) # rubocop:disable Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
+      def self.value(noid) # rubocop:disable  Metrics/PerceivedComplexity, Metrics/CyclomaticComplexity, Metrics/MethodLength, Metrics/AbcSize
         # Proxy Server REST API
         #
         # The handle proxy REST API allows programmatic access to handle resolution using HTTP.

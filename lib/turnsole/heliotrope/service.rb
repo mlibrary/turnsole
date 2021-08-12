@@ -69,6 +69,104 @@ module Turnsole
         []
       end
 
+      def product_licenses(identifier:)
+        product_id = find_product(identifier: identifier)
+        return [] if product_id.nil?
+
+        response = connection.get("products/#{product_id}/licenses")
+        return response.body if response.success?
+
+        []
+      end
+
+      def find_product_individual_license(identifier:, individual_identifier:)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        individual_id = find_individual(identifier: individual_identifier)
+        return false if individual_id.nil?
+
+        response = connection.get("products/#{product_id}/individuals/#{individual_id}/license")
+        return nil unless response.success?
+
+        Heliotrope.decode_license_type(response.body["type"])
+      end
+
+      def create_product_individual_license(identifier:, individual_identifier:, license_type: :full)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        individual_id = find_individual(identifier: individual_identifier)
+        return false if individual_id.nil?
+
+        type = Heliotrope.encode_license_type(license_type)
+        return false if type.nil?
+
+        response = connection.post("products/#{product_id}/individuals/#{individual_id}/license", { license: { type: type } }.to_json)
+        return true if response.success?
+
+        warn "Unable to create product #{identifier} individual #{individual_identifier} license #{license_type} - #{response.body}"
+        false
+      end
+
+      def delete_product_individual_license(identifier:, individual_identifier:)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        individual_id = find_individual(identifier: individual_identifier)
+        return false if individual_id.nil?
+
+        response = connection.delete("products/#{product_id}/individuals/#{individual_id}/license")
+        return true if response.success?
+
+        warn "Unable to delete product #{identifier} individual #{individual_identifier} - #{response.body}"
+        false
+      end
+
+      def find_product_institution_license(identifier:, institution_identifier:, affiliation: :member)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        institution_id = find_institution(identifier: institution_identifier)
+        return false if institution_id.nil?
+
+        response = connection.get("products/#{product_id}/institutions/#{institution_id}/license/#{affiliation}")
+        return nil unless response.success?
+
+        Heliotrope.decode_license_type(response.body["type"])
+      end
+
+      def create_product_institution_license(identifier:, institution_identifier:, affiliation: :member, license_type: :full)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        institution_id = find_institution(identifier: institution_identifier)
+        return false if institution_id.nil?
+
+        type = Heliotrope.encode_license_type(license_type)
+        return false if type.nil?
+
+        response = connection.post("products/#{product_id}/institutions/#{institution_id}/license/#{affiliation}", { license: { type: type } }.to_json)
+        return true if response.success?
+
+        warn "Unable to create product #{identifier} institution #{institution_identifier} license #{license_type} affiliation #{affiliation} - #{response.body}"
+        false
+      end
+
+      def delete_product_institution_license(identifier:, institution_identifier:, affiliation: :member)
+        product_id = find_product(identifier: identifier)
+        return false if product_id.nil?
+
+        institution_id = find_institution(identifier: institution_identifier)
+        return false if institution_id.nil?
+
+        response = connection.delete("products/#{product_id}/institutions/#{institution_id}/license/#{affiliation}")
+        return true if response.success?
+
+        warn "Unable to delete product #{identifier} institution #{institution_identifier} license affiliation #{affiliation} - #{response.body}"
+        false
+      end
+
       #
       # Component
       #
@@ -211,6 +309,16 @@ module Turnsole
         []
       end
 
+      def individual_licenses(identifier:)
+        individual_id = find_individual(identifier: identifier)
+        return [] if individual_id.nil?
+
+        response = connection.get("individuals/#{individual_id}/licenses")
+        return response.body if response.success?
+
+        []
+      end
+
       #
       # Institution
       #
@@ -243,6 +351,47 @@ module Turnsole
         connection.delete("institutions/#{id}")
       end
 
+      def institution_affiliations(identifier:)
+        institution_id = find_institution(identifier: identifier)
+        return [] if institution_id.nil?
+
+        response = connection.get("institutions/#{institution_id}/affiliations")
+        return response.body if response.success?
+
+        []
+      end
+
+      def find_institution_affiliation(identifier:, dlps_institution_id:, affiliation:)
+        institution_id = find_institution(identifier: identifier)
+        return nil if institution_id.nil?
+
+        response = connection.get("institutions/#{institution_id}/affiliation", dlps_institution_id: dlps_institution_id, affiliation: affiliation)
+        return response.body["id"] if response.success?
+
+        nil
+      end
+
+      def create_institution_affiliation(identifier:, dlps_institution_id:, affiliation:)
+        institution_id = find_institution(identifier: identifier)
+        return nil if institution_id.nil?
+
+        response = connection.post("institutions/#{institution_id}/affiliations", { institution_affiliation: { institution_id: institution_id, dlps_institution_id: dlps_institution_id, affiliation: affiliation } }.to_json)
+        return response.body["id"] if response.success?
+
+        warn "Unable to create institution #{identifier} - #{response.body}"
+        nil
+      end
+
+      def delete_institution_affiliation(identifier:, dlps_institution_id:, affiliation:)
+        institution_id = find_institution(identifier: identifier)
+        return nil if institution_id.nil?
+
+        institution_affiliation_id = find_institution_affiliation(identifier: identifier, dlps_institution_id: dlps_institution_id, affiliation: affiliation)
+        return nil if institution_affiliation_id.nil?
+
+        connection.delete("institutions/#{institution_id}/affiliations/#{institution_affiliation_id}")
+      end
+
       def institution_products(identifier:)
         institution_id = find_institution(identifier: identifier)
         return [] if institution_id.nil?
@@ -253,116 +402,14 @@ module Turnsole
         []
       end
 
-      #
-      # Subscriptions
-      #
+      def institution_licenses(identifier:)
+        institution_id = find_institution(identifier: identifier)
+        return [] if institution_id.nil?
 
-      def product_individual_subscribed?(product_identifier:, individual_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_individual(identifier: individual_identifier)
-        return false if product_id.nil? || id.nil?
+        response = connection.get("institutions/#{institution_id}/licenses")
+        return response.body if response.success?
 
-        response = connection.get("products/#{product_id}/individuals/#{id}")
-        response.success?
-      end
-
-      def unsubscribe_product_individual(product_identifier:, individual_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_individual(identifier: individual_identifier)
-        return false if product_id.nil? || id.nil?
-
-        response = connection.delete("products/#{product_id}/individuals/#{id}")
-        response.success?
-      end
-
-      def product_institution_subscribed?(product_identifier:, institution_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_institution(identifier: institution_identifier)
-        return false if product_id.nil? || id.nil?
-
-        response = connection.get("products/#{product_id}/institutions/#{id}")
-        response.success?
-      end
-
-      def unsubscribe_product_institution(product_identifier:, institution_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_institution(identifier: institution_identifier)
-        return false if product_id.nil? || id.nil?
-
-        response = connection.delete("products/#{product_id}/institutions/#{id}")
-        response.success?
-      end
-
-      #
-      # License { :full, :read, :none }
-      #
-      #   :full - both read and download access
-      #   :read - read access (no download access)
-      #   :none - expired access
-      #
-      #   :undefined - no association between subscriber and product
-      #
-
-      def product_individual_license?(product_identifier:, individual_identifier:, license:)
-        return false unless LICENSES.include?(license)
-
-        license == get_product_individual_license(product_identifier: product_identifier, individual_identifier: individual_identifier)
-      end
-
-      def get_product_individual_license(product_identifier:, individual_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_individual(identifier: individual_identifier)
-        return :undefined if product_id.nil? || id.nil?
-
-        response = connection.get("products/#{product_id}/individuals/#{id}/license")
-        return :undefined unless response.success?
-
-        response.body["license"].to_sym
-      end
-
-      def set_product_individual_license(product_identifier:, individual_identifier:, license:)
-        return false unless LICENSES.include?(license)
-
-        product_id = find_product(identifier: product_identifier)
-        id = find_individual(identifier: individual_identifier)
-        return false if product_id.nil? || id.nil?
-
-        response = connection.post("products/#{product_id}/individuals/#{id}/license", { license: license }.to_json)
-        return true if response.success?
-
-        warn "Failed to set license #{license} on product #{product_identifier} for individual #{individual_identifier}"
-        false
-      end
-
-      def product_institution_license?(product_identifier:, institution_identifier:, license:)
-        return false unless LICENSES.include?(license)
-
-        license == get_product_institution_license(product_identifier: product_identifier, institution_identifier: institution_identifier)
-      end
-
-      def get_product_institution_license(product_identifier:, institution_identifier:)
-        product_id = find_product(identifier: product_identifier)
-        id = find_institution(identifier: institution_identifier)
-        return :undefined if product_id.nil? || id.nil?
-
-        response = connection.get("products/#{product_id}/institutions/#{id}/license")
-        return :undefined unless response.success?
-
-        response.body["license"].to_sym
-      end
-
-      def set_product_institution_license(product_identifier:, institution_identifier:, license:)
-        return false unless LICENSES.include?(license)
-
-        product_id = find_product(identifier: product_identifier)
-        id = find_institution(identifier: institution_identifier)
-        return false if product_id.nil? || id.nil?
-
-        response = connection.post("products/#{product_id}/institutions/#{id}/license", { license: license }.to_json)
-        return true if response.success?
-
-        warn "Failed to set license #{license} on product #{product_identifier} for institution #{institution_identifier}"
-        false
+        []
       end
 
       #
