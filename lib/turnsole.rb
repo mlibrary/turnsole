@@ -6,7 +6,7 @@ module Turnsole
   #
   require 'logger'
   # mattr_accessor :logger
-  @logger = Logger.new(STDOUT)
+  @logger = Logger.new($stdout)
 
   def self.logger
     @logger

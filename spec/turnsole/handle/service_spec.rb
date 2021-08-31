@@ -10,7 +10,7 @@ RSpec.describe Turnsole::Handle::Service do
     it { expect(described_class.noid(described_class.path(invalidnoid))).to eq nil }
     it { expect(described_class.noid(described_class.path(validnoid))).to eq validnoid }
     it { expect(described_class.noid(described_class.url(validnoid))).to eq validnoid }
-    it { expect(described_class.noid(described_class.url(validnoid) + "?key=value")).to eq validnoid }
+    it { expect(described_class.noid("#{described_class.url(validnoid)}?key=value")).to eq validnoid }
   end
 
   describe '#path' do
@@ -36,7 +36,7 @@ RSpec.describe Turnsole::Handle::Service do
       allow(response).to receive(:status).and_return(status)
     end
 
-    context '1' do
+    context '1' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:code) { 1 }
       let(:values) { [{ data: { value: 'url' }, type: 'URL' }] }
       let(:status) { 200 }
@@ -44,7 +44,7 @@ RSpec.describe Turnsole::Handle::Service do
       it { expect(described_class.value(validnoid)).to eq "url" }
     end
 
-    context '1 : Success. (HTTP 200 OK)' do
+    context '1 : Success. (HTTP 200 OK)' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:code) { 1 }
       let(:values) { [{ data: { value: 'doi' }, type: 'DOI' }] }
       let(:status) { 200 }
@@ -52,21 +52,21 @@ RSpec.describe Turnsole::Handle::Service do
       it { expect(described_class.value(validnoid)).to eq "1 : Success. (HTTP 200 OK)" }
     end
 
-    context '2' do
+    context '2' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:code) { 2 }
       let(:status) { 500 }
 
       it { expect(described_class.value(validnoid)).to eq "2 : Error. Something unexpected went wrong during handle resolution. (HTTP 500 Internal Server Error)" }
     end
 
-    context '100' do
+    context '100' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:code) { 100 }
       let(:status) { 404 }
 
       it { expect(described_class.value(validnoid)).to eq "100 : Handle Not Found. (HTTP 404 Not Found)" }
     end
 
-    context '200' do
+    context '200' do # rubocop:disable RSpec/MultipleMemoizedHelpers
       let(:code) { 200 }
       let(:status) { 200 }
 
