@@ -18,6 +18,15 @@ RSpec.describe Turnsole::Heliotrope::Service do
   individuals = []
   institutions = []
 
+  # HELIO-5014 
+  # I'm pretty sure this entire spec isn't running correctly, although I think the individual methods work.
+  # The spec uses a live Heliotrope instance and creates/deletes data in it 
+  # and I'm not sure if it's working right, it seems to leave data behind sometimes.
+  # I added error handling in HELIO-5002 to the cleanup code in the around(:all) block but that
+  # seems to have made things worse.
+  # We have API specs in heliotrope, so live calls probably aren't necessary here?
+  # We need a ticket to fix this.
+
   before do
     n.times do |i|
       products << "test_product_#{i}"
