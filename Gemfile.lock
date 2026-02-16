@@ -99,7 +99,7 @@ PLATFORMS
   ruby
 
 DEPENDENCIES
-  bundler (~> 2.1.4)
+  bundler (~> 2.5.22)
   coveralls (~> 0.8)
   dotenv (~> 2.5)
   rake (~> 13.0)
@@ -110,4 +110,4 @@ DEPENDENCIES
   yard (~> 0.9)
 
 BUNDLED WITH
-   2.1.4
+   2.5.22
