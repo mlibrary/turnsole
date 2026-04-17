@@ -93,7 +93,7 @@ GEM
     tins (1.29.1)
       sync
     unicode-display_width (1.7.0)
-    yard (0.9.36)
+    yard (0.9.42)
 
 PLATFORMS
   ruby
